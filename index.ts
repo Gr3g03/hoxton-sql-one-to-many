@@ -183,7 +183,6 @@ app.get(`/museums/:id`, (req, resp) => {
 
 })
 
-
 app.get(`/works`, (req, resp) => {
     const result = getAllWorks.all()
 
@@ -241,7 +240,6 @@ app.delete(`/museums/:id`, (req, res) => {
         res.send({ message: ' Delted Sucessfully' })
     }
 })
-
 
 app.patch(`/museums/:id`, (req, res) => { })
 app.patch(`/works/:id`, (req, res) => { })
