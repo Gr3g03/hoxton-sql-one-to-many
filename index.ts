@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS  works(
 id INTEGER ,
 name TEXT NOT NULL,
 picture TEXT NOT NULL,
-WorkId integer NOT NULL,
+WorkId INTEGER NOT NULL,
 PRIMARY KEY (id),
 FOREIGN KEY (WorkId) REFERENCES museums(id)
 );`)
@@ -86,7 +86,7 @@ const works = [
     },
     {
         name: 'Museum Conservator',
-        picture: 'https://images.squarespace-cdn.com/content/v1/5443d7c7e4b06e8b47de9a55/1496442105064-Z18PGQDX0O7KBSQGN208/museum_conservation.jpg?format=1000w',
+        picture: 'https://images.squaresace-cdn.com/content/v1/5443d7c7e4b06e8b47de9a55/1496442105064-Z18PGQDX0O7KBSQGN208/museum_conservation.jpg?format=1000w',
         workId: 2
     },
     {
@@ -122,7 +122,7 @@ INSERT INTO  works (name, picture, workId) VALUES(?, ?, ?);
 `)
 
 for (const museum of museums) {
-    createMuseum.run(museum.city, museum.name)
+    createMuseum.run(museum.name, museum.city)
 }
 
 for (const work of works) {
@@ -161,14 +161,12 @@ SELECT * FROM works WHERE workId =?;
 `)
 
 
-app.get(`/museums`, (req, resp) => {
+app.get(`/museums`, (req, res) => {
     const result = getAllMuseums.all()
 
-
-
-    resp.send(result)
+    res.send(result)
 })
-app.get(`/museums/:id`, (req, resp) => {
+app.get(`/museums/:id`, (req, res) => {
     const id = req.params.id
 
     const result = getMuseumById.get(id)
@@ -176,29 +174,29 @@ app.get(`/museums/:id`, (req, resp) => {
     if (result) {
         const museums = getMuseumByWorkId.all(result.id)
         result.id = museums
-        resp.send(result)
+        res.send(result)
     } else {
-        resp.status(404).send({ error: ' Museum not found' })
+        res.status(404).send({ error: ' Museum not found' })
     }
 
 })
 
-app.get(`/works`, (req, resp) => {
+app.get(`/works`, (req, res) => {
     const result = getAllWorks.all()
 
     for (const work of result) {
         const museum = getMuseumById.get(work.WorkId)
         work.museum = museum
     }
-    resp.send(result)
+    res.send(result)
 })
 
-app.get(`/works/:id`, (req, resp) => {
+app.get(`/works/:id`, (req, res) => {
     const id = req.params.id
 
     const result = getWorkById.get(id)
 
-    resp.send(result)
+    res.send(result)
 })
 
 app.post(`/museums`, (req, res) => {
