@@ -177,6 +177,15 @@ app.get(`/works/:id`, (req, resp) => {
     resp.send(result)
 })
 
+app.post(`/museums`, (req, res) => { })
+app.post(`/works`, (req, res) => { })
+
+app.delete(`/museums/:id`, (req, res) => { })
+app.delete(`/works/:id`, (req, res) => { })
+
+
+app.patch(`/museums/:id`, (req, res) => { })
+app.patch(`/works/:id`, (req, res) => { })
 
 
 
