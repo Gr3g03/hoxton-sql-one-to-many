@@ -202,8 +202,32 @@ app.get(`/works/:id`, (req, resp) => {
     resp.send(result)
 })
 
-app.post(`/museums`, (req, res) => { })
-app.post(`/works`, (req, res) => { })
+app.post(`/museums`, (req, res) => {
+    const { name, city } = req.body
+
+    const result = createMuseum.run(name, city)
+
+    if (result.changes !== 0) {
+        const museum = getMuseumById.get(result.lastInsertRowid)
+        res.send(museum)
+    } else {
+        res.status(404).send({ error: ' somethig went wrong' })
+    }
+
+
+})
+app.post(`/works`, (req, res) => {
+    const { name, picture, workId } = req.body
+
+    const result = creatework.run(name, picture, workId)
+
+    if (result.changes !== 0) {
+        const work = getWorkById.get(result.lastInsertRowid)
+        res.send(work)
+    } else {
+        res.status(404).send({ error: 'something went wrong' })
+    }
+})
 
 app.delete(`/museums/:id`, (req, res) => {
     const id = req.params.id
