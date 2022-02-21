@@ -148,8 +148,23 @@ SELECT * FROM works
 WHERE id =?;
 `)
 
+const deleteMuseum = db.prepare(`
+DELETE FROM museums WHERE id =?;
+`)
+
+const deleteWork = db.prepare(`
+DELETE FROM works WHERE id =?;
+`)
+
+const getMuseumByWorkId = db.prepare(`
+SELECT * FROM works WHERE workId =?;
+`)
+
+
 app.get(`/museums`, (req, resp) => {
     const result = getAllMuseums.all()
+
+
 
     resp.send(result)
 })
@@ -158,7 +173,13 @@ app.get(`/museums/:id`, (req, resp) => {
 
     const result = getMuseumById.get(id)
 
-    resp.send(result)
+    if (result) {
+        const museums = getMuseumByWorkId.all(result.id)
+        result.id = museums
+        resp.send(result)
+    } else {
+        resp.status(404).send({ error: ' Museum not found' })
+    }
 
 })
 
@@ -166,6 +187,10 @@ app.get(`/museums/:id`, (req, resp) => {
 app.get(`/works`, (req, resp) => {
     const result = getAllWorks.all()
 
+    for (const work of result) {
+        const museum = getMuseumById.get(work.WorkId)
+        work.museum = museum
+    }
     resp.send(result)
 })
 
@@ -180,8 +205,18 @@ app.get(`/works/:id`, (req, resp) => {
 app.post(`/museums`, (req, res) => { })
 app.post(`/works`, (req, res) => { })
 
-app.delete(`/museums/:id`, (req, res) => { })
-app.delete(`/works/:id`, (req, res) => { })
+app.delete(`/museums/:id`, (req, res) => {
+    const id = req.params.id
+
+    deleteWork.run(id)
+    const result = deleteMuseum.run(id)
+
+    if (result.changes === 0) {
+        res.status(404).send({ error: ' Museum not found' })
+    } else {
+        res.send({ message: ' Delted Sucessfully' })
+    }
+})
 
 
 app.patch(`/museums/:id`, (req, res) => { })
