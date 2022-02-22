@@ -164,6 +164,12 @@ SELECT * FROM works WHERE workId =?;
 app.get(`/museums`, (req, res) => {
     const result = getAllMuseums.all()
 
+
+    for (const museum of result) {
+        const works = getMuseumByWorkId.all(museum.id)
+        museum.works = works
+
+    }
     res.send(result)
 })
 app.get(`/museums/:id`, (req, res) => {
@@ -171,14 +177,7 @@ app.get(`/museums/:id`, (req, res) => {
 
     const result = getMuseumById.get(id)
 
-    if (result) {
-        const museums = getMuseumByWorkId.all(result.id)
-        result.id = museums
-        res.send(result)
-    } else {
-        res.status(404).send({ error: ' Museum not found' })
-    }
-
+    res.send(result)
 })
 
 app.get(`/works`, (req, res) => {
@@ -194,9 +193,10 @@ app.get(`/works`, (req, res) => {
 app.get(`/works/:id`, (req, res) => {
     const id = req.params.id
 
-    const result = getWorkById.get(id)
+    const work = getWorkById.get(id)
 
-    res.send(result)
+
+    res.send(work)
 })
 
 app.post(`/museums`, (req, res) => {
